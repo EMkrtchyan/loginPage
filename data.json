@@ -1,0 +1,36 @@
+[
+    {
+        "firstName": "avs",
+        "lastName": "sda",
+        "email": "asda@mail.com",
+        "password": "$2b$10$3zDnNQOBvoIqL0zKzZ4f/O3HWGTuQCf7cLQOXiK8gQVtfquRnn.we"
+    },
+    {
+        "firstName": "avs",
+        "lastName": "sda",
+        "email": "asda@mail.com",
+        "password": "$2b$10$3zDnNQOBvoIqL0zKzZ4f/O3HWGTuQCf7cLQOXiK8gQVtfquRnn.we"
+    },
+    {
+        "id": 3,
+        "name": "New Item",
+        "value": "This is a new entry"
+    },
+    {
+        "id": 3,
+        "name": "New Item",
+        "value": "This is a new entry"
+    },
+    {
+        "firstName": "dsad",
+        "lastName": "dasasd",
+        "email": "dsada@mail.com",
+        "password": "$2b$10$h8cHJov1zPHffm.79iq32OXZcCcsfIcN.INM36cgrkbz8H4cmC0lK"
+    },
+    {
+        "firstName": "avs",
+        "lastName": "avs",
+        "email": "avs@mail.com",
+        "password": "$2b$10$XrYH.DBEIjTIRMSLgSLk/uGbzN6WSwl4b2U0.Y4X4ENuyCrVG8Ruu"
+    }
+]

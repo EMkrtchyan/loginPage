@@ -1,0 +1,19 @@
+{
+  "name": "loginpage",
+  "version": "1.0.0",
+  "description": "Simple login page",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon run dev"
+  },
+  "author": "Eric",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.7",
+    "path": "^0.12.7"
+  }
+}
