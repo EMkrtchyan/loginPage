@@ -3,30 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Home</title>
 </head>
 <body>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="http://localhost:3001">Home Page</a>
-          </div>
+    <nav class="navbar" id="navbar">
+        <!-- Navbar will be dynamically updated -->
+    </nav>
+    <div class="welcome-message" id="welcome-message">
+        Loading...
+    </div>
+    <script>
+        // Function to check login status
+        async function checkLogin() {
+            try {
+                const response = await fetch("/check-login", { method: "GET" });
 
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          </ul>
-        </div>
-      </nav>
-        
-      <div class="container">
-        <h3>Home Page Content</h3>
-      </div>
+                if (response.ok) {
+                    const { loggedIn, userName } = await response.json();
+
+                    const navbar = document.getElementById("navbar");
+                    const welcomeMessage = document.getElementById("welcome-message");
+
+                    if (loggedIn) {
+                        // If logged in, show logout and welcome message
+                        welcomeMessage.textContent = `Welcome, ${userName}`;
+                        navbar.innerHTML = `
+                            <div class="logo">
+                                <a href="/"><img src="/logo-placeholder.png" alt="Logo"></a>
+                            </div>
+                            <div class="auth-links">
+                                <a href="/logout">Logout</a>
+                            </div>
+                        `;
+                    } else {
+                        welcomeMessage.textContent = "Please login or register";
+                        navbar.innerHTML = `
+                            <div class="logo">
+                                <a href="/"><img src="/logo-placeholder.png" alt="Logo"></a>
+                            </div>
+                            <div class="auth-links">
+                                <a href="/login">Login</a>
+                                <a href="/register">Register</a>
+                            </div>
+                        `;
+                    }
+                } else {
+                    throw new Error("Failed to fetch login state");
+                }
+            } catch (error) {
+                console.error("Error checking login state:", error);
+                document.getElementById("welcome-message").textContent =
+                    "An error occurred. Please refresh the page.";
+            }
+        }
+
+        checkLogin();
+    </script>
 </body>
 </html>

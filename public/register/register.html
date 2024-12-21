@@ -3,80 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Register</title>
 </head>
 <body>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="http://localhost:3001">Home Page</a>
-          </div>
-
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          </ul>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/"><img src="/logo-placeholder.png" alt="Logo"></a>
         </div>
-      </nav>
-    <h1 class="container">Registration Page</h1>
-
-
-    <form class="reg" action="/login" method="POST">
-<!-- Registration 3 - Bootstrap Brain Component -->
-<section class="p-3 p-md-4 p-xl-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 col-md-6 bsb-tpl-bg-lotion">
-        <div class="p-3 p-md-4 p-xl-5">
-          <div class="row">
-            <div class="col-12">
-              <div class="mb-5">
-                <h2 class="h3">Registration</h2>
-              </div>
-            </div>
-          </div>
-          <form action="#!">
-            <div class="row gy-3 gy-md-4 overflow-hidden">
-              <div class="col-12">
-                <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name" required>
-              </div>
-              <div class="col-12">
-                <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name" required>
-              </div>
-              <div class="col-12">
-                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
-              </div>
-              <div class="col-12">
-                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" name="password" id="password" value="" required>
-              </div>
-              <div class="col-12">
-                <div class="form-check">
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="d-grid">
-                  <button class="btn bsb-btn-xl btn-primary" type="submit">Sign up</button>
-                </div>
-              </div>
-            </div>
-          </form>
-          <div class="row">
-          </div>
-          <div class="row">
-          </div>
+        <div class="auth-links">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
         </div>
-      </div>
+    </nav>
+    <div class="container">
+        <h1>Register</h1>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div id="response-message" class="response-message"></div>
     </div>
-  </div>
-</section>
+
+    <script>
+        document.getElementById("register-form").addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(event.target);
+            const data = {
+                firstName: formData.get("firstName"),
+                lastName: formData.get("lastName"),
+                email: formData.get("email"),
+                password: formData.get("password"),
+            };
+
+            try {
+                const response = await fetch("/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                const messageDiv = document.getElementById("response-message");
+
+                if (response.ok) {
+                    messageDiv.textContent = "Registration successful! Redirecting to login...";
+                    messageDiv.style.color = "green";
+                    setTimeout(() => {
+                        window.location.href = "/login"; // Redirect after success
+                    }, 500);
+                } else {
+                    messageDiv.textContent = result.message || "Registration failed. Please try again.";
+                    messageDiv.style.color = "red";
+                }
+            } catch (error) {
+                console.error("Error during registration:", error);
+                const messageDiv = document.getElementById("response-message");
+                messageDiv.textContent = "An error occurred. Please try again.";
+                messageDiv.style.color = "red";
+            }
+        });
+    </script>
 </body>
 </html>

@@ -2,40 +2,35 @@ import express, { text } from "express";
 import path from "path";
 import bcrypt from "bcrypt";
 import fs from "fs";
-
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(express.static("public"));
-app.use(express.urlencoded({extended:true}));
+
+// Middleware
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const filePath = path.resolve("data.json");
 
-
+// Utility Functions
 async function register(newData) {
     try {
-        // Read the file
-        const data = await fs.promises.readFile('data.json', 'utf8');
-
-        // Parse the JSON file content
+        const data = await fs.promises.readFile(filePath, 'utf8');
         const jsonData = data.trim() ? JSON.parse(data) : [];
-
-        // Push new data to the array
         jsonData.push(newData);
-
-        // Write updated data back to the JSON file
-        await fs.promises.writeFile('data.json', JSON.stringify(jsonData, null, 4));
+        await fs.promises.writeFile(filePath, JSON.stringify(jsonData, null, 4));
         console.log('Data successfully added to the file!');
     } catch (err) {
         if (err.code === 'ENOENT') {
-            // Handle the case where the file does not exist
             console.error('File not found, creating a new one...');
             const jsonData = [newData];
-            await fs.writeFile('data.json', JSON.stringify(jsonData, null, 4));
+            await fs.promises.writeFile(filePath, JSON.stringify(jsonData, null, 4));
             console.log('File created and data added!');
         } else if (err.name === 'SyntaxError') {
-            // Handle JSON parsing errors
             console.error('Error parsing JSON:', err);
         } else {
-            // Handle other errors
             console.error('Error handling file:', err);
         }
     }
@@ -43,88 +38,120 @@ async function register(newData) {
 
 async function getUserByEmail(email) {
     try {
-        // Read and parse the JSON file
-        const data = await fs.promises.readFile('data.json', 'utf8');
+        const data = await fs.promises.readFile(filePath, 'utf8');
         const users = JSON.parse(data);
-        // Find the user by email
-        const user = users.find(user => user.email === email);
-        // Return the user or a message if not found
-        return user ;
+        return users.find(user => user.email === email);
     } catch (err) {
         console.error('Error reading or parsing the file:', err);
         throw err;
     }
 }
 
-async function checkUser(pwd,email){
-    const user = await getUserByEmail(email);
-    if(user)
-    {
-        const hash = user.password
-        console.log(pwd,hash)
-        return await bcrypt.compare(pwd, hash);
-    }
-    else
-    {
-        return false 
+async function checkUser(pwd, email) {
+    try {
+        const user = await getUserByEmail(email);
+        if (!user) return false;
+        return await bcrypt.compare(pwd, user.password);
+    } catch (error) {
+        console.error("Error in checkUser:", error);
+        return false;
     }
 }
 
-app.post("/", async (req,res)=>{
-    let log_data = req.body;
-    const filePath = path.resolve("data.json");
+function authenticateToken(req, res, next) {
+    const token = req.cookies.authToken;
+    if (!token) return res.redirect("/login");
 
-    const email = log_data.email
-    const result = await checkUser(log_data.password,email)
+    jwt.verify(token, "your_secret_key", (err, user) => {
+        if (err) return res.redirect("/login");
+        req.user = user;
+        next();
+    });
+}
 
-    if(result)
-        {
-            console.log("correct password")
+// Routes
+// Authentication Routes
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: "Email and password are required" });
+    }
+
+    try {
+        const result = await checkUser(password, email);
+        if (result) {
+            const token = jwt.sign({ email }, "your_secret_key", { expiresIn: "1h" });
+            res.cookie("authToken", token, { httpOnly: true });
+            res.status(200).json({ success: true, message: "Login successful" });
+        } else {
+            res.status(401).json({ success: false, message: "Invalid email or password" });
         }
-    else
-        {
-            console.log("wrong password")
-        }
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
 });
 
+app.get("/logout", (req, res) => {
+    res.clearCookie("authToken");
+    res.redirect("/");
+});
 
+// User Management Routes
+app.post("/register", async (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+    try {
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Գաղտնաբառը պետք է պարունակի նվազագույնը 6 նշան ունենա մեկ մեծատառ, մեկ փոքրատառ, մեկ թվանշան և մեկ սիմվոլ։"
+            });
+        }
 
-app.get("/register",(req,res)=>{
+        const existingUser = await getUserByEmail(email);
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Email-ը պատկանոում է այլ հաշվի" });
+        }
+
+        const hashPwd = await bcrypt.hash(password, 10);
+        await register({ firstName, lastName, email, password: hashPwd });
+        res.status(200).json({ success: true, message: "Registration successful!" });
+    } catch (error) {
+        console.error("Error during registration:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+// Static Pages
+app.get("/", authenticateToken, (req, res) => {
+    res.sendFile(path.resolve("public/index.html"));
+});
+
+app.get("/register", (req, res) => {
     res.sendFile(path.resolve("public/register/register.html"));
 });
-app.get("/login",(req,res)=>{
+
+app.get("/login", (req, res) => {
     res.sendFile(path.resolve("public/login/login.html"));
 });
 
-app.post("/",  (req,res)=>{
-    let log_data = req.body;
-    const filePath = path.resolve("userdata.json");
-    fs.promises.readFile(filePath,'utf-8').then(async(data)=>{
-        const parsedData = JSON.parse(data);
-        const checkPwd = await bcrypt.hash(log_data.password,10);
-        bcrypt.compare(log_data.password,parsedData[0].password,(err)=>{
-            if(!err){
-                console.error('Error comparing passwords:', err);
-                return;
-            }
-        })
-        console.log(checkPwd);
-        console.log(parsedData[0].password);
-    });
+// Utility Routes
+app.get("/check-login", (req, res) => {
+    const token = req.cookies.authToken;
+    if (!token) return res.json({ loggedIn: false, userName: null });
 
-});
-app.post("/login",async (req,res)=>{
-    const {firstName,lastName,email,password} = req.body;
-    const hashPwd = await bcrypt.hash(password,10);
-    register({
-        firstName,
-        lastName,
-        email,
-        password:hashPwd
+    jwt.verify(token, "your_secret_key", (err, decoded) => {
+        if (err) return res.json({ loggedIn: false, userName: null });
+        res.json({ loggedIn: true, userName: decoded.email });
     });
-    res.redirect(path.resolve("/login"));
 });
 
+// Static Files
+app.use(express.static("public"));
 
-app.listen(3001);
+// Start Server
+app.listen(3001, () => {
+    console.log("Server running on port 3001");
+});

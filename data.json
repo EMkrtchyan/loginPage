@@ -1,36 +1,50 @@
 [
     {
         "firstName": "avs",
-        "lastName": "sda",
-        "email": "asda@mail.com",
-        "password": "$2b$10$3zDnNQOBvoIqL0zKzZ4f/O3HWGTuQCf7cLQOXiK8gQVtfquRnn.we"
-    },
-    {
-        "firstName": "avs",
-        "lastName": "sda",
-        "email": "asda@mail.com",
-        "password": "$2b$10$3zDnNQOBvoIqL0zKzZ4f/O3HWGTuQCf7cLQOXiK8gQVtfquRnn.we"
-    },
-    {
-        "id": 3,
-        "name": "New Item",
-        "value": "This is a new entry"
-    },
-    {
-        "id": 3,
-        "name": "New Item",
-        "value": "This is a new entry"
-    },
-    {
-        "firstName": "dsad",
-        "lastName": "dasasd",
-        "email": "dsada@mail.com",
-        "password": "$2b$10$h8cHJov1zPHffm.79iq32OXZcCcsfIcN.INM36cgrkbz8H4cmC0lK"
-    },
-    {
-        "firstName": "avs",
         "lastName": "avs",
-        "email": "avs@mail.com",
-        "password": "$2b$10$XrYH.DBEIjTIRMSLgSLk/uGbzN6WSwl4b2U0.Y4X4ENuyCrVG8Ruu"
+        "email": "avs@mail.ru",
+        "password": "$2b$10$OJitTYy1bv3uvymQt9WeQeQovZPkQAsvSBR6d8dReq6tw3Kxo4gxu"
+    },
+    {
+        "firstName": "abc",
+        "lastName": "abc",
+        "email": "abc@mail.com",
+        "password": "$2b$10$eIA1DxGw6Q2vW3wDFq38S.blmXric0WoDSOD7vE1eyVTkucwuK8uS"
+    },
+    {
+        "firstName": "abc",
+        "lastName": "abc",
+        "email": "abc@mail.com",
+        "password": "$2b$10$aXKTIo8C/15NMgTYa.htQ.s9//NtMQ0QBqGh7.NSu00dQSCzX1VZO"
+    },
+    {
+        "firstName": "abc",
+        "lastName": "abc",
+        "email": "abgc@mail.com",
+        "password": "$2b$10$CqzuaUpDYCyxAvs7uOeS3uRvIQujj86lD99L2Pknus77aZEarHwEe"
+    },
+    {
+        "firstName": "abcd",
+        "lastName": "abcd",
+        "email": "abdgc@mail.com",
+        "password": "$2b$10$3W.37wVkJMOYKjkoGhKq6eX0WhSKqWtdBl9jwnJbHS70sc9O.opQm"
+    },
+    {
+        "firstName": "abcd",
+        "lastName": "abcd",
+        "email": "abdsgc@mail.com",
+        "password": "$2b$10$cAw.8rHuIO2m/yjHjuOo9.FTU6hbIgJ7KeFJKkwa8NOVkI2nvfoei"
+    },
+    {
+        "firstName": "ewq",
+        "lastName": "dasd",
+        "email": "ewqeq@mail.com",
+        "password": "$2b$10$E.GQJxf4usGVq0cGcqAv9OMOYwyWwZpcR1FiY.t707gvQiUIHM6ry"
+    },
+    {
+        "firstName": "asdas",
+        "lastName": "asdasd",
+        "email": "sda@mail.com",
+        "password": "$2b$10$2m5vWW5cODzfPtJjO3hfj.lFRa8eac4pgnBPj.f9xVSy90a6o3Xd2"
     }
 ]

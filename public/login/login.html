@@ -3,45 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Login</title>
 </head>
 <body>
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a class="navbar-brand" href="http://localhost:3001">Home Page</a>
-          </div>
-
-          <ul class="nav navbar-nav navbar-right">
-            <!-- <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> -->
-            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          </ul>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/"><img src="/logo-placeholder.png" alt="Logo"></a>
         </div>
-      </nav>
-    <h1 class="container">Login Page</h1>
+        <div class="auth-links">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <div id="login-message" style="color: red; margin-top: 10px;"></div>
+        </form>
+    </div>
+    <script>
+        const loginForm = document.getElementById("login-form");
+        const loginMessage = document.getElementById("login-message");
 
+        loginForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
 
-    <form action="/" method="POST" class="container">
-      <div class="col-12">
-        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-        <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
-      </div>
-      <div class="col-12">
-        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-        <input type="password" class="form-control" name="password" id="password" value="" required>
-      </div>
-      <div class="d-grid">
-        <button class="btn bsb-btn-xl btn-primary" type="submit">Login</button>
-      </div>
-      </form> 
+            const formData = new FormData(loginForm);
+            const payload = Object.fromEntries(formData.entries());
 
-      <div class="container">
-      </div>
+            try {
+                const response = await fetch("/login", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Redirect on successful login
+                    window.location.href = "/";
+                } else {
+                    // Display error message
+                    loginMessage.textContent = data.message;
+                }
+            } catch (error) {
+                console.error("Error logging in:", error);
+                loginMessage.textContent = "An error occurred. Please try again.";
+            }
+        });
+    </script>
 </body>
 </html>
